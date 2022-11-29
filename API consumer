@@ -1,0 +1,56 @@
+#apirest.py
+import requests
+import json  # llamar librerías
+
+from typing import Dict, Optional
+#obtener url
+url = "https://reqres.in/api/users?page=1"
+url = "https://reqres.in/api/users?page=2"
+
+verbo = "GET"
+user_data = requests.request("GET", url)
+print(user_data.text)
+
+def request(url:str, verbo:str, data:Dict={}) -> Optional[Dict]:
+    requests.request(verbo, url, data = data)
+    if data.status_code in [201, 202, 203, 204]:
+        return data.json()
+    return None
+
+#crear usuario
+total_pages = request.get('total_pages')
+user_data = []
+for i in range(1, total_pages + 1):
+    url= f"https://reqres.in/api/users?page={i}"
+    user_data += request.get('data')
+print(user_data)
+
+user_data_dict = {user.get("id"): user for user in user_data}
+print(user_data_dict)
+
+user_post_data = {
+    "name": "Ignacio",
+    "job": "Profesor"
+}
+
+#actualizar un usuario
+url = "https://reqres.in/api/users"
+create_user = request("POST", url, data = user_post_data)
+print(create_user)
+
+user_update_data = {
+    "name": "morpheus",
+    "job": "zion, resident"
+}
+
+#Eliminar un usuario
+nombre = 'Tracey'
+url = f"https://reqres.in/api/users/{user_data_dict[nombre]['id']}"
+update_user = request("PUT", url, data = user_update_data)
+print(update_user)
+
+nombre = "Tracey"
+url = "https://reqres.in/api/users"
+response = request("DELETE", url)
+
+response.status_code
